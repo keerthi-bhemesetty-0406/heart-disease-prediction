@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartGuard AI - Dashboard</title>
+    <style>
+        /* CSS resets for consistency */
+        body, h1, h2, h3, p, ul { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f9fafb; color: #111827; }
+
+        /* Top App Bar/Navigation (Browser Style) */
+        .app-header { background-color: #1a1a1a; color: white; display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; position: sticky; top: 0; z-index: 1000; }
+        .status-bar { display: flex; font-size: 14px; gap: 8px; }
+        .browser-controls { display: flex; align-items: center; gap: 12px; }
+        .url-bar { background-color: #333; color: #ccc; padding: 6px 16px; border-radius: 20px; font-size: 16px; min-width: 250px; text-align: left; }
+        .icon-btn { background: none; border: none; color: white; cursor: pointer; font-size: 20px; padding: 4px; }
+        .tab-count { border: 1px solid white; border-radius: 6px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
+        /* HeartGuard AI Header */
+        .app-inner-header { background-color: white; padding: 16px 24px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; }
+        .logo-section { display: flex; align-items: center; color: #e11d48; font-weight: 700; font-size: 18px; text-decoration: none; }
+        .logo-section svg { margin-right: 8px; }
+        .nav-links { display: flex; gap: 20px; list-style: none; }
+        .nav-links a { text-decoration: none; color: #4b5563; font-size: 14px; font-weight: 500; }
+        .nav-links a.active { color: #111827; font-weight: 600; }
+        .logout-btn { background-color: #f3f4f6; color: #111827; border: 1px solid #d1d5db; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; text-decoration: none;}
+
+        /* Main Content */
+        .main-content { padding: 32px 24px; max-width: 1200px; margin: 0 auto; }
+        .welcome-section { margin-bottom: 24px; }
+        .welcome-title { font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .waving-hand { font-size: 24px; }
+        .welcome-subtitle { color: #6b7280; font-size: 14px; margin-top: 4px; }
+
+        /* KPI Cards Grid */
+        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+        .kpi-card { background-color: white; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; position: relative;}
+        .kpi-title { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;}
+        .kpi-value { font-size: 32px; font-weight: 700; margin-top: 8px; }
+        .kpi-icon { position: absolute; top: 16px; right: 16px; font-size: 16px; }
+        .kpi-subtitle { font-size: 12px; color: #6b7280; margin-top: 4px; }
+
+        /* Specific styles for card colors */
+        #high-risk .kpi-value { color: #dc2626; } /* red */
+        #low-risk .kpi-value { color: #16a34a; }  /* green */
+        .kpi-icon.blue { color: #2563eb; }
+        .kpi-icon.red { color: #dc2626; }
+        .kpi-icon.green { color: #16a34a; }
+        .kpi-icon.gray { color: #9ca3af; }
+
+        /* Action Buttons */
+        .action-buttons { display: flex; gap: 12px; }
+        .btn { padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 6px; border: 1px solid transparent;}
+        .btn-primary { background-color: #2563eb; color: white; }
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .btn-secondary { background-color: white; color: #374151; border: 1px solid #d1d5db; }
+        .btn-secondary:hover { background-color: #f9fafb; }
+
+        /* Footer */
+        .lovable-footer { text-align: right; padding: 16px 24px; font-size: 10px; color: #9ca3af; border-top: 1px solid #e5e7eb; }
+        .lovable-link { color: inherit; text-decoration: none; font-weight: 600;}
+        .lovable-link span { color: #e11d48; }
+
+    </style>
+</head>
+<body>
+
+    
+
+    <nav class="app-inner-header">
+        <a href="index.html" class="logo-section">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.41 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.59 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z" fill="#e11d48"/>
+            </svg>
+            <span>HeartGuard AI</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('dashboard') }}" class="active">Dashboard</a></li>
+            <li><a href="{{ url_for('predict_page') }}">Predict</a></li>
+            <li><a href="{{ url_for('history') }}">History</a></li>
+        </ul>
+        <a href="{{ url_for('index') }}" class="logout-btn">Logout</a>
+    </nav>
+
+    <main class="main-content">
+        <section class="welcome-section">
+            <h1 class="welcome-title">Welcome, {{ user.fullname }}! <span class="waving-hand">👋</span></h1>
+            <p class="welcome-subtitle">Here's your heart health overview</p>
+        </section>
+
+        <section class="kpi-grid">
+    {% set history = session.get('history', []) %}
+    {% set total = history|length %}
+    {% set high_count = history | selectattr('result', 'equalto', 'High Risk') | list | length %}
+    {% set low_count = history | selectattr('result', 'equalto', 'Low Risk') | list | length %}
+    {% set last_result = history[-1].result if total > 0 else "No predictions yet" %}
+
+    <div class="kpi-card">
+        <p class="kpi-title">Total Predictions</p>
+        <p class="kpi-value">{{ total1 }}</p>
+        <span class="kpi-icon blue">📈</span>
+    </div>
+
+    <div class="kpi-card">
+        <p class="kpi-title">Last Result</p>
+        <p class="kpi-subtitle">{{ last }}</p>
+        <span class="kpi-icon gray">🕒</span>
+    </div>
+
+    <div class="kpi-card" id="high-risk">
+        <p class="kpi-title">High Risk Count</p>
+        <p class="kpi-value" style="color: #dc2626;">{{ high }}</p>
+        <span class="kpi-icon red">⚠️</span>
+    </div>
+
+    <div class="kpi-card" id="low-risk">
+        <p class="kpi-title">Low Risk Count</p>
+        <p class="kpi-value" style="color: #16a34a;">{{ low }}</p>
+        <span class="kpi-icon green">✅</span>
+    </div>
+</section>
+
+        <section class="action-buttons">
+            <a href="{{ url_for('predict_page') }}" class="btn btn-primary">
+                <span>⊕</span> New Prediction
+            </a>
+            <a href="{{ url_for('history') }}" class="btn btn-secondary">
+                <span>📋</span> View History
+            </a>
+        </section>
+    </main>
+
+    
+
+    <script>
+        // Placeholder for any minimal interactivity, e.g., simulating data loading
+        // We will update these values when integrating with other pages
+        console.log("Dashboard loaded with zero data (initial state).");
+    </script>
+</body>
+</html>

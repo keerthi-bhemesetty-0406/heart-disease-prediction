@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartGuard AI - Prediction System</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent: #e11d48;
+            --bg-light: #f0f7ff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Reusable Animations */
+        .hover-scale {
+            transition: var(--transition);
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Section Visibility Toggle */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            border-bottom: 1px solid #f1f5f9;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .logo svg { color: var(--accent); }
+
+        .nav-btns {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .login-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .login-link:hover { color: var(--primary); }
+
+        .signup-btn {
+            background: var(--primary);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+            background: radial-gradient(circle at center, var(--bg-light) 0%, #ffffff 70%);
+        }
+
+        .ml-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff1f2;
+            color: #be123c;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            border: 1px solid #ffe4e6;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 span { color: var(--primary); }
+
+        .hero p {
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .primary-btn {
+            background: var(--primary);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .secondary-btn {
+            background: #f8fafc;
+            color: var(--text-main);
+            padding: 14px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 5%;
+            text-align: center;
+        }
+
+        .features h2 { font-size: 2rem; margin-bottom: 10px; }
+        .features-sub { color: var(--text-muted); margin-bottom: 50px; }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            text-align: left;
+            border: 1px solid #f1f5f9;
+        }
+        
+        .icon-square {
+            width: 45px;
+            height: 45px;
+            background: #eff6ff;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Auth Pages Styling (Merged) */
+        .auth-container {
+            min-height: calc(100vh - 150px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-light);
+            padding: 40px 20px;
+        }
+
+        .auth-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        .form-group { text-align: left; margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; color: #475569;}
+        
+        .input-wrapper { position: relative; }
+        .input-wrapper input {
+            width: 100%;
+            padding: 10px 10px 10px 35px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: #f8fafc;
+        }
+        .input-wrapper svg { position: absolute; left: 10px; top: 11px; color: #94a3b8; }
+
+        /* Footer */
+        footer {
+            padding: 40px 5%;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            footer { flex-direction: column; gap: 20px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo" onclick="showPage('home')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            HeartGuard AI
+        </div>
+        <div class="nav-btns">
+            <a href="{{ url_for('login') }}" class="login-link" onclick="showPage('login')">Login</a>
+            <a href="{{ url_for('signup') }}" class="signup-btn hover-scale" onclick="showPage('signup')">Sign Up</a>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <div id="home" class="page-section active">
+        <section class="hero">
+            <div class="ml-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                Powered by Machine Learning
+            </div>
+            <h1>Heart Disease <span>Prediction System</span></h1>
+            <p>Assess your heart disease risk in seconds using our AI-powered prediction model trained on clinical data.</p>
+            <div class="btn-group">
+                <a href="{{ url_for('login') }}" class="primary-btn hover-scale" style="text-decoration: none;">
+    Get Started 
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14m-7-7 7 7-7 7"/>
+    </svg>
+</a>
+                <button class="secondary-btn hover-scale" onclick="location.href='{{ url_for('signup') }}'">Sign Up</button>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>Why Choose HeartGuard AI?</h2>
+            <p class="features-sub">Clinical-grade prediction powered by modern machine learning</p>
+            <div class="card-grid">
+                <div class="card hover-scale">
+                    <div class="icon-square"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
+                    <h3>AI-Powered Prediction</h3>
+                    <p>Advanced stacking model combining Random Forest & XGBoost for accurate assessment.</p>
+                </div>
+                <div class="card hover-scale">
+                    <div class="icon-square"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 14 3-11L20 10l-3 11-11-7Z"/></svg></div>
+                    <h3>Fast & Accurate (~90%)</h3>
+                    <p>Get instant predictions with clinical-grade accuracy based on validated parameters.</p>
+                </div>
+                <div class="card hover-scale">
+                    <div class="icon-square"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg></div>
+                    <h3>Secure Data Handling</h3>
+                    <p>Your medical data stays private and secure with local processing and encryption.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+   
+    <footer>
+        <div class="logo" style="font-size: 0.9rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            HeartGuard AI
+        </div>
+        <p>© 2026 — For educational purposes only</p>
+    </footer>
+
+    <script>
+    // 1. Improved Page Switcher
+    function showPage(pageId) {
+        // Hide all sections
+        document.querySelectorAll('.page-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // Show the requested section
+        const target = document.getElementById(pageId);
+        if (target) {
+            target.classList.add('active');
+        }
+        
+        // Scroll to top
+        window.scrollTo(0, 0);
+    }
+
+    // 2. FIX: Ensure home is shown if no section is active on load
+    window.addEventListener('load', () => {
+        const activeSections = document.querySelectorAll('.page-section.active');
+        if (activeSections.length === 0) {
+            showPage('home');
+        }
+    });
+
+    // 3. FIX: Handle the browser "Back" button correctly
+    window.addEventListener('pageshow', (event) => {
+        // If the user navigated via back/forward button, force the home view
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            showPage('home');
+        }
+    });
+</script>
+</body>
+</html>

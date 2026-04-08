@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartGuard AI - Predict</title>
+    <style>
+        /* Base Reset */
+        body, h1, h2, h3, p, ul { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f9fafb; 
+            color: #111827; 
+            padding-bottom: 50px;
+        }
+
+        /* Top Navigation Bar */
+        .app-inner-header { 
+            background-color: white; 
+            padding: 12px 24px; 
+            border-bottom: 1px solid #e5e7eb; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+        }
+        .logo-section { 
+            display: flex; 
+            align-items: center; 
+            color: #e11d48; 
+            font-weight: 700; 
+            text-decoration: none; 
+            font-size: 16px;
+        }
+        .logo-section svg { margin-right: 8px; }
+        .nav-links { display: flex; gap: 20px; list-style: none; }
+        .nav-links a { text-decoration: none; color: #4b5563; font-size: 13px; font-weight: 500; }
+        .nav-links a.active { color: #111827; border-bottom: 2px solid #111827; padding-bottom: 4px; }
+        .logout-btn { 
+            background-color: white; 
+            color: #374151; 
+            border: 1px solid #d1d5db; 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            font-size: 12px; 
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        /* Page Layout */
+        .main-content { padding: 32px 16px; max-width: 800px; margin: 0 auto; }
+        .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+        .page-subtitle { color: #6b7280; font-size: 13px; margin-bottom: 24px; }
+
+        /* Form Card */
+        .patient-card { 
+            background: white; 
+            border: 1px solid #e5e7eb; 
+            border-radius: 12px; 
+            padding: 24px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .card-header h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+        .card-header p { font-size: 12px; color: #6b7280; margin-bottom: 24px; }
+
+        /* Form Grid - Two Columns */
+        .form-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px 24px; 
+        }
+        
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 12px; font-weight: 600; color: #374151; }
+        
+        input, select { 
+            padding: 10px 12px; 
+            border: 1px solid #e5e7eb; 
+            border-radius: 8px; 
+            font-size: 14px; 
+            background-color: #f9fafb; 
+            color: #111827;
+            outline: none;
+        }
+        input:focus, select:focus { border-color: #2563eb; background-color: #fff; }
+
+        /* Full width button */
+        .predict-btn { 
+            grid-column: span 2; 
+            background-color: #2563eb; 
+            color: white; 
+            border: none; 
+            padding: 14px; 
+            border-radius: 8px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            margin-top: 12px;
+            transition: background 0.2s;
+        }
+        .predict-btn:hover { background-color: #1d4ed8; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .predict-btn { grid-column: span 1; }
+        }
+        select:invalid {
+    color: #9ca3af; /* A light gray color */
+}
+
+/* This ensures the actual options are black again when clicked */
+select option {
+    color: #111827;
+}
+    </style>
+</head>
+<body>
+
+    <nav class="app-inner-header">
+        <a href="{{ url_for('index') }}" class="logo-section">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.41 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.59 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z" fill="#e11d48"/>
+            </svg>
+            <span>HeartGuard AI</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('predict_page') }}" class="active">Predict</a></li>
+            <li><a href="{{ url_for('history') }}">History</a></li>
+        </ul>
+        <a href="{{ url_for('index') }}" class="logout-btn">Logout</a>
+    </nav>
+
+    <main class="main-content">
+        <h1 class="page-title">Heart Disease Prediction</h1>
+        <p class="page-subtitle">Enter your medical data below</p>
+
+        <form action="/get_prediction" method="POST" class="patient-card">
+    <div class="card-header">
+        <h3>Patient Data</h3>
+        <p>All fields are required for accurate prediction</p>
+    </div>
+
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Age</label>
+            <input type="number" name="age"  required>
+        </div>
+
+        <div class="form-group">
+            <label>Sex</label>
+            <select name="sex">
+                <option value="" disabled selected hidden>Select Sex</option>
+                <option value="1">Male</option>
+                <option value="0">Female</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Chest Pain Type</label>
+            <select name="chest_pain_type">
+                <option value="" disabled selected hidden>Select Chest Pain Type</option>
+                <option value="1">Typical Angina</option>
+                <option value="2">Atypical Angina</option>
+                <option value="3">Non-anginal Pain</option>
+                <option value="4">Asymptomatic</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Resting Blood Pressure (mmHg)</label>
+            <input type="number" name="resting_bp_s"  required>
+        </div>
+
+        <div class="form-group">
+            <label>Cholesterol (mg/dL)</label>
+            <input type="number" name="cholesterol"  required>
+        </div>
+
+        <div class="form-group">
+            <label>Fasting Blood Sugar > 120 mg/dL</label>
+            <select name="fasting_blood_sugar">
+                <option value="" disabled selected hidden>Select Fasting Blood Sugar</option>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Resting ECG</label>
+            <select name="resting_ecg">
+                <option value="" disabled selected hidden>Select Resting ECG</option>
+                <option value="0">Normal</option>
+                <option value="1">ST-T wave abnormality</option>
+                <option value="2">Left ventricular hypertrophy</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Max Heart Rate (bpm)</label>
+            <input type="number" name="max_heart_rate"  required>
+        </div>
+
+        <div class="form-group">
+            <label>Exercise Induced Angina</label>
+            <select name="exercise_angina">
+                <option value="" disabled selected hidden>Select Exercise Induced Angina</option>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Oldpeak (ST Depression)</label>
+            <input type="number" step="0.1" name="oldpeak"  required>
+        </div>
+
+        <div class="form-group">
+            <label>ST Slope</label>
+            <select name="st_slope">
+                <option value="" disabled selected hidden>Select ST Slope</option>
+                <option value="1">Upsloping</option>
+                <option value="2">Flat</option>
+                <option value="3">Downsloping</option>
+                <option value="0">Other/Unknown</option>
+            </select>
+        </div>
+
+        <button type="submit" class="predict-btn">Predict</button>
+    </div>
+</form>
+    </main>
+
+</body>
+</html>

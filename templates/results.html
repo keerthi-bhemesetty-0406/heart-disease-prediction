@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartGuard AI - Prediction Results</title>
+    <style>
+        /* Base Reset */
+        body, h1, h2, h3, p, ul { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f9fafb; 
+            color: #111827; 
+        }
+
+        /* Navigation Header */
+        .app-inner-header { 
+            background-color: white; 
+            padding: 12px 24px; 
+            border-bottom: 1px solid #e5e7eb; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+        }
+        .nav-links { display: flex; gap: 20px; list-style: none; }
+        .nav-links a { text-decoration: none; color: #4b5563; font-size: 13px; font-weight: 500; }
+        .nav-links a.active { color: #111827; border-bottom: 2px solid #111827; padding-bottom: 4px; }
+        .logo-section { 
+            display: flex; 
+            align-items: center; 
+            color: #e11d48; 
+            font-weight: 700; 
+            text-decoration: none; 
+        }
+        .logo-section svg { margin-right: 8px; }
+
+        /* Main Content */
+        .main-content { padding: 32px 16px; max-width: 600px; margin: 0 auto; }
+        .back-link { text-decoration: none; color: #6b7280; font-size: 14px; margin-bottom: 20px; display: inline-block; }
+
+        /* Result Card */
+        .result-card { 
+            background: white; 
+            border: 1px solid #e5e7eb; 
+            border-radius: 12px; 
+            padding: 40px 24px; 
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .status-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 30px;
+        }
+
+        /* Dynamic colors based on result */
+        .low-risk-bg { background-color: #dcfce7; color: #16a34a; }
+        .high-risk-bg { background-color: #fee2e2; color: #dc2626; }
+        
+        .risk-text { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .probability-value { font-size: 48px; font-weight: 800; margin-bottom: 4px; }
+        .probability-label { color: #6b7280; font-size: 14px; margin-bottom: 30px; }
+
+        /* Chart Placeholder (Donut style) */
+        .chart-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            /* This creates the green/red ring effect based on probability */
+            background: conic-gradient(
+                {% if result == 'High Risk' %} #dc2626 {% else %} #16a34a {% endif %} {{ prob }}%, 
+                #e5e7eb 0
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chart-inner {
+            width: 140px;
+            height: 140px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Recommendations */
+        .rec-section { margin-top: 24px; text-align: left; }
+        .rec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+        .rec-item { 
+            background: #f9fafb; 
+            border: 1px solid #e5e7eb; 
+            padding: 12px; 
+            border-radius: 8px; 
+            font-size: 13px; 
+            line-height: 1.4;
+        }
+
+        .btn-download {
+            margin-top: 30px;
+            width: 100%;
+            padding: 12px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="app-inner-header">
+        <a href="/" class="logo-section">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.41 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.59 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z" fill="#e11d48"/>
+            </svg>
+            <span>HeartGuard AI</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('predict_page') }}" class="active">Predict</a></li>
+            <li><a href="{{ url_for('history') }}">History</a></li>
+        </ul>
+        <a href="{{ url_for('index') }}" class="logout-btn">Logout</a>
+    </nav>
+
+    <main class="main-content">
+        
+        <div class="result-card">
+            <div class="status-icon {% if result == 'High Risk' %} high-risk-bg {% else %} low-risk-bg {% endif %}">
+                {% if result == 'High Risk' %} ⚠️ {% else %} ✓ {% endif %}
+            </div>
+
+            <h2 class="risk-text {% if result == 'High Risk' %} high-risk-bg {% else %} low-risk-bg {% endif %}">
+                {{ result }}
+            </h2>
+
+            <div class="chart-container">
+                <div class="chart-inner">
+                    <span style="font-size: 28px; font-weight: 800;">{{ prob }}%</span>
+                    <span style="font-size: 12px; color: #6b7280;">Risk Level</span>
+                </div>
+            </div>
+
+            <p class="probability-label">Probability of heart disease based on your data</p>
+
+            <hr style="border: 0; border-top: 1px solid #f3f4f6; margin-bottom: 24px;">
+
+            <div class="rec-section">
+                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">❤️ Health Recommendations</h3>
+                <div class="rec-grid">
+                    <div class="rec-item">1. Continue maintaining a healthy lifestyle</div>
+                    <div class="rec-item">2. Stay active with regular physical exercise</div>
+                    <div class="rec-item">3. Eat plenty of fruits, vegetables, and whole grains</div>
+                    <div class="rec-item">4. Get regular health check-ups</div>
+                    <div class="rec-item">5. Manage stress with healthy coping strategies</div>
+                    <div class="rec-item">6. Stay hydrated and get adequate sleep</div>
+                </div>
+            </div>
+
+            
+        </div>
+    </main>
+
+</body>
+</html>
