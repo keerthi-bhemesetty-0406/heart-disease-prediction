@@ -3,6 +3,6 @@ Flask-SQLAlchemy
 gunicorn
 pandas==2.2.2
 numpy<2.0.0
-scikit-learn
+scikit-learn==1.5.1
 joblib
 xgboost
