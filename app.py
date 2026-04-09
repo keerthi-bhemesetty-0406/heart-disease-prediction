@@ -12,8 +12,21 @@ app = Flask(__name__)
 app.secret_key = 'super_secret_heartguard_key' 
 
 # Database Configuration (SQLite)
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'heartguard.db')
+import os
+
+# Get the Database URL from Render's Environment Variables
+db_url = os.environ.get('DATABASE_URL')
+
+if db_url:
+    # Fix for SQLAlchemy: Render gives 'postgres://', but we need 'postgresql://'
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+else:
+    # If running locally on your laptop, use SQLite
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'heartguard.db')
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
