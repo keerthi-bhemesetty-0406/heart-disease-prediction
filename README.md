@@ -27,16 +27,6 @@ Real-time Prediction: Uses a trained .pkl model to provide instant health risk a
 
 Responsive Design: Works on both mobile and desktop browsers.
 
-📁 Project Structure
-Plaintext
-heart-disease-prediction/
-├── app.py                     
-├── heart_disease_stack_model.pkl 
-├── scaler.pkl                  
-├── requirements.txt            
-├── templates/                  
-
-
 ⚙️ How to Run Locally
 Clone the repository:
 git clone https://github.com/keerthi-bhemesetty-0406/heart-disease-prediction.git
