@@ -1,7 +1,5 @@
 ❤️ Heart Guard: ML Heart Disease Prediction App
 A full-stack web application that uses Machine Learning to predict the likelihood of heart disease based on health metrics.
-This project is deployed on Render using a Flask backend and a PostgreSQL database.
-
 
 🛠️ Tech Stack
 Frontend: HTML5, CSS3, JavaScript (Responsive UI)
