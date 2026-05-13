@@ -2,8 +2,6 @@
 A full-stack web application that uses Machine Learning to predict the likelihood of heart disease based on health metrics.
 This project is deployed on Render using a Flask backend and a PostgreSQL database.
 
-🚀 Live Demo
-Link:https://heart-disease-prediction-jiyf.onrender.com
 
 🛠️ Tech Stack
 Frontend: HTML5, CSS3, JavaScript (Responsive UI)
@@ -16,7 +14,6 @@ Machine Learning: * Model: Stacking Hybrid Model (Random Forest + XGBoost)
 
 Preprocessing: StandardScaler (Scikit-Learn)
 
-Deployment: Render, GitHub
 
 ✨ Key Features
 User Authentication: Secure Signup and Login system using Flask-SQLAlchemy and Werkzeug password hashing.
